@@ -1,5 +1,3 @@
-# Turtlebot-Maze-Navigator
-
 # Instructions
 
 The robot has to navigate through the maze autonomously and find the exit point. You may use any
