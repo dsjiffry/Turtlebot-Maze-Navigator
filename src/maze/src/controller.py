@@ -17,20 +17,24 @@ def lidarCallback(data):
 	subscription.unregister()
 		
 	forward = data.ranges[0]
-	left = data.ranges[109]
+	left = data.ranges[89]
+	leftBack = data.ranges[109]
 	backward = data.ranges[179]
-	right = data.ranges[249]
+	rightBack = data.ranges[249]
+	right = data.ranges[269]
 
 	rospy.loginfo('Forward: %f', forward)
 	rospy.loginfo('Left: %f', left)
+	rospy.loginfo('Left Back: %f', leftBack)
 	rospy.loginfo('Backward: %f', backward)
+	rospy.loginfo('Right Back: %f', rightBack)
 	rospy.loginfo('Right: %f', right)
 	rospy.loginfo('-----------------------------------',)
 
 	moveRobot("stop")
 
 	if mainWall == "right":
-		if right > 0.6 and currentDirection != "right": 
+		if rightBack > 0.6 and currentDirection != "right": 
 			turn("right")
 			moveRobot("forward")
 			currentDirection = "right"
@@ -47,7 +51,7 @@ def lidarCallback(data):
 				mainWall = "left"
 	
 	else:
-		if left > 0.6 and currentDirection != "left": 
+		if leftBack > 0.6 and currentDirection != "left": 
 			turn("left")
 			moveRobot("forward")
 			currentDirection = "left"
