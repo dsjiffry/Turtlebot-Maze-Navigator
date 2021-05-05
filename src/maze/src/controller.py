@@ -9,17 +9,19 @@ from tf.msg import tfMessage
 
 currentDirection = directiontoTurn = "forward"
 subscription = turnSubscription = pub = move_cmd = None
+numberOfSlits = 0
 mainWall = "right"
 isTurning = False
 
 def lidarCallback(data):
-	global currentDirection, mainWall,subscription
+	global currentDirection, mainWall, subscription, numberOfSlits
 	subscription.unregister()
 		
 	forward = data.ranges[0]
 	left = data.ranges[89]
 	leftBack = data.ranges[109]
 	backward = data.ranges[179]
+	rightForward = data.ranges[289]
 	rightBack = data.ranges[249]
 	right = data.ranges[269]
 
@@ -27,14 +29,21 @@ def lidarCallback(data):
 	rospy.loginfo('Left: %f', left)
 	rospy.loginfo('Left Back: %f', leftBack)
 	rospy.loginfo('Backward: %f', backward)
-	rospy.loginfo('Right Back: %f', rightBack)
+	rospy.loginfo('Right Forward: %f', rightForward)
 	rospy.loginfo('Right: %f', right)
+	rospy.loginfo('Right Back: %f', rightBack)	
 	rospy.loginfo('-----------------------------------',)
 
 	moveRobot("stop")
 
 	if mainWall == "right":
 		if rightBack > 0.6 and currentDirection != "right": 
+#			if rightForward < 0.5:
+#				numberOfSlits = numberOfSlits + 1
+#				moveRobot("forward")
+#				subscription = rospy.Subscriber('scan', LaserScan, lidarCallback)
+#				return
+			
 			turn("right")
 			moveRobot("forward")
 			currentDirection = "right"
