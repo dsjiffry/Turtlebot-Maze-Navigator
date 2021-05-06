@@ -9,6 +9,7 @@
 # modified environment variables
 export CMAKE_PREFIX_PATH="/home/user/assignment/devel:$CMAKE_PREFIX_PATH"
 export LD_LIBRARY_PATH="/home/user/assignment/devel/lib:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="/home/user/assignment/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD='/home/user/assignment/build'
 export ROSLISP_PACKAGE_DIRECTORIES='/home/user/assignment/devel/share/common-lisp'
 export ROS_PACKAGE_PATH="/home/user/assignment/src:$ROS_PACKAGE_PATH"
