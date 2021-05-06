@@ -13,159 +13,149 @@ numberOfSlits = 0
 mainWall = "right"
 isTurning = False
 
+
 def lidarCallback(data):
-	global currentDirection, mainWall, subscription, numberOfSlits
-	subscription.unregister()
-		
-	forward = data.ranges[0]
-	left = data.ranges[89]
-	leftBack = data.ranges[109]
-	backward = data.ranges[179]
-	rightForward = data.ranges[289]
-	rightBack = data.ranges[249]
-	right = data.ranges[269]
+    global currentDirection, mainWall, subscription, numberOfSlits
+    subscription.unregister()
 
-	rospy.loginfo('Forward: %f', forward)
-	rospy.loginfo('Left: %f', left)
-	rospy.loginfo('Left Back: %f', leftBack)
-	rospy.loginfo('Backward: %f', backward)
-	rospy.loginfo('Right Forward: %f', rightForward)
-	rospy.loginfo('Right: %f', right)
-	rospy.loginfo('Right Back: %f', rightBack)	
-	rospy.loginfo('-----------------------------------',)
+    forward = data.ranges[0]
+    left = data.ranges[89]
+    leftBack = data.ranges[109]
+    backward = data.ranges[179]
+    rightForward = data.ranges[289]
+    rightBack = data.ranges[249]
+    right = data.ranges[269]
 
-	moveRobot("stop")
+    rospy.loginfo('Forward: %f', forward)
+    rospy.loginfo('Left: %f', left)
+    rospy.loginfo('Left Back: %f', leftBack)
+    rospy.loginfo('Backward: %f', backward)
+    rospy.loginfo('Right Forward: %f', rightForward)
+    rospy.loginfo('Right: %f', right)
+    rospy.loginfo('Right Back: %f', rightBack)
+    rospy.loginfo('-----------------------------------',)
 
-	if mainWall == "right":
-		if rightBack > 0.6 and currentDirection != "right": 
-#			if rightForward < 0.5:
-#				numberOfSlits = numberOfSlits + 1
-#				moveRobot("forward")
-#				subscription = rospy.Subscriber('scan', LaserScan, lidarCallback)
-#				return
-			
-			turn("right")
-			moveRobot("forward")
-			currentDirection = "right"
+    moveRobot("stop")
 
-		elif forward > 0.3:
-			moveRobot("forward")
-			
-		elif forward <= 0.3:
-			if currentDirection == "right":
-				turn("forward")
-				currentDirection = "forward"
-			else:
-				turn("backward")
-				mainWall = "left"
-	
-	else:
-		if leftBack > 0.6 and currentDirection != "left": 
-			turn("left")
-			moveRobot("forward")
-			currentDirection = "left"
+    if mainWall == "right":
+        if rightBack > 0.6 and currentDirection != "right":
+            #			if rightForward < 0.5:
+            #				numberOfSlits = numberOfSlits + 1
+            #				moveRobot("forward")
+            #				subscription = rospy.Subscriber('scan', LaserScan, lidarCallback)
+            #				return
 
-		elif forward > 0.3:
-			moveRobot("forward")
-			
-		elif forward <= 0.3:
-			if currentDirection == "left":
-				turn("backward")
-				currentDirection = "backward"
-			else:
-				turn("forward")
-				mainWall = "right"
+            turn("right")
+            moveRobot("forward")
+            currentDirection = "right"
 
+        elif forward > 0.3:
+            moveRobot("forward")
 
-	subscription = rospy.Subscriber('scan', LaserScan, lidarCallback)
+        elif forward <= 0.3:
+            if currentDirection == "right":
+                turn("forward")
+                currentDirection = "forward"
+            else:
+                turn("backward")
+                mainWall = "left"
 
+    else:
+        if leftBack > 0.6 and currentDirection != "left":
+            turn("left")
+            moveRobot("forward")
+            currentDirection = "left"
+
+        elif forward > 0.3:
+            moveRobot("forward")
+
+        elif forward <= 0.3:
+            if currentDirection == "left":
+                turn("backward")
+                currentDirection = "backward"
+            else:
+                turn("forward")
+                mainWall = "right"
+
+    subscription = rospy.Subscriber('scan', LaserScan, lidarCallback)
 
 
 def turnCallback(data):
-	global isTurning, directiontoTurn, turnSubscription
-	reading = data.transforms[0].transform.rotation.w
+    global isTurning, directiontoTurn, turnSubscription
+    reading = data.transforms[0].transform.rotation.w
 
-	if directiontoTurn == "forward":
-		if reading >= 0.9990:
-			moveRobot("stop")
-			isTurning = False
-			turnSubscription.unregister()
+    if directiontoTurn == "forward":
+        if reading >= 0.9990:
+            moveRobot("stop")
+            isTurning = False
+            turnSubscription.unregister()
 
-	elif directiontoTurn == "right" or directiontoTurn == "left":
-		if reading >= 0.7040 and reading <= 0.7060:
-			moveRobot("stop")
-			isTurning = False
-			turnSubscription.unregister()
+    elif directiontoTurn == "right" or directiontoTurn == "left":
+        if reading >= 0.7040 and reading <= 0.7060:
+            moveRobot("stop")
+            isTurning = False
+            turnSubscription.unregister()
 
-	elif directiontoTurn == "backward":
-		if reading >= -0.0010 and reading <= 0.0010:
-			moveRobot("stop")
-			isTurning = False
-			turnSubscription.unregister()
+    elif directiontoTurn == "backward":
+        if reading >= -0.0010 and reading <= 0.0010:
+            moveRobot("stop")
+            isTurning = False
+            turnSubscription.unregister()
 
 
 def turn(direction):
-	global isTurning, directiontoTurn, turnSubscription, currentDirection
-	isTurning = True
-	directiontoTurn = direction
+    global isTurning, directiontoTurn, turnSubscription, currentDirection
+    isTurning = True
+    directiontoTurn = direction
 
-	turnSubscription = rospy.Subscriber('tf', tfMessage, turnCallback)
-	if direction == "forward":
-		if currentDirection == "right":
-			moveRobot("left")
-		else:
-			moveRobot("right")
-	elif direction == "backward":
-		if currentDirection == "left":
-			moveRobot("right")
-		else:
-			moveRobot("left")	
-	else:
-		moveRobot(direction)
+    turnSubscription = rospy.Subscriber('tf', tfMessage, turnCallback)
+    if direction == "forward":
+        if currentDirection == "right":
+            moveRobot("left")
+        else:
+            moveRobot("right")
+    elif direction == "backward":
+        if currentDirection == "left":
+            moveRobot("right")
+        else:
+            moveRobot("left")
+    else:
+        moveRobot(direction)
 
-	while isTurning:
-		time.sleep(0.1)
-	
-
-
-	
-
-	
-
-
+    while isTurning:
+        time.sleep(0.1)
 
 
 def moveRobot(command):
-	global pub, move_cmd
-	if command == "forward":
-		move_cmd.linear.x = 0.22
-		move_cmd.angular.z = 0.0
-	elif command == "stop":
-		move_cmd.linear.x = 0.0
-		move_cmd.angular.z = 0.0
-	elif command == "right":
-		move_cmd.linear.x = 0.0
-		move_cmd.angular.z = -0.10
-	elif command == "left" or command == "backward":
-		move_cmd.linear.x = 0.0
-		move_cmd.angular.z = 0.10
-	pub.publish(move_cmd)
-	time.sleep(0.01)
+    global pub, move_cmd
+    if command == "forward":
+        move_cmd.linear.x = 0.22
+        move_cmd.angular.z = 0.0
+    elif command == "stop":
+        move_cmd.linear.x = 0.0
+        move_cmd.angular.z = 0.0
+    elif command == "right":
+        move_cmd.linear.x = 0.0
+        move_cmd.angular.z = -0.10
+    elif command == "left" or command == "backward":
+        move_cmd.linear.x = 0.0
+        move_cmd.angular.z = 0.10
+    pub.publish(move_cmd)
+    time.sleep(0.01)
+
 
 def listener():
 
-	rospy.init_node('maze_solver', anonymous=True)
+    rospy.init_node('maze_solver', anonymous=True)
 
-	global subscription, move_cmd, pub
-	move_cmd = Twist()
-	pub = rospy.Publisher('cmd_vel',Twist,queue_size=1)
-	subscription = rospy.Subscriber('scan', LaserScan, lidarCallback)
+    global subscription, move_cmd, pub
+    move_cmd = Twist()
+    pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+    subscription = rospy.Subscriber('scan', LaserScan, lidarCallback)
 
-	# spin() keeps python from exiting 
-	rospy.spin()
+    # spin() keeps python from exiting
+    rospy.spin()
+
 
 if __name__ == '__main__':
-	listener()
-
-
-
+    listener()
