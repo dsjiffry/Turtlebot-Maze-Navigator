@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 import rospy
+import sys
 import time
+from numpy import inf
 from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
@@ -20,10 +22,13 @@ def lidarCallback(data):
 
     forward = data.ranges[0]
     left = data.ranges[89]
-    leftBack = data.ranges[109]
+#    leftBack = data.ranges[109]
+    leftBack = data.ranges[102]
     backward = data.ranges[179]
-    rightForward = data.ranges[289]
-    rightBack = data.ranges[249]
+    rightForward = data.ranges[279]
+  #  rightForward = data.ranges[289]
+ #   rightBack = data.ranges[249]
+    rightBack = data.ranges[265]
     right = data.ranges[269]
 
     rospy.loginfo('Forward: %f', forward)
@@ -37,6 +42,16 @@ def lidarCallback(data):
 
     moveRobot("stop")
 
+    if left  == inf and right == inf and forward == inf:
+        if numberOfSlits == 1:
+            executeFirstPath()
+        elif numberOfSlits == 2:
+            executeSecondPath()
+        elif numberOfSlits == 3:
+            executeThirdPath()
+        sys.exit(0)
+
+
     if mainWall == "right":
         if rightBack > 0.6 and currentDirection != "right":
             if rightForward < 0.5:
@@ -49,10 +64,10 @@ def lidarCallback(data):
             moveRobot("forward")
             currentDirection = "right"
 
-        elif forward > 0.3:
+        elif forward > 0.2:
             moveRobot("forward")
 
-        elif forward <= 0.3:
+        elif forward <= 0.2:
             if currentDirection == "right":
                 turn("forward")
                 currentDirection = "forward"
@@ -66,13 +81,15 @@ def lidarCallback(data):
             moveRobot("forward")
             currentDirection = "left"
 
-        elif forward > 0.3:
+        elif forward > 0.2:
             moveRobot("forward")
 
-        elif forward <= 0.3:
+        elif forward <= 0.2:
             if currentDirection == "left":
                 turn("backward")
                 currentDirection = "backward"
+                moveRobot("forward")
+                time.sleep(0.1)
             else:
                 turn("forward")
                 mainWall = "right"
@@ -85,7 +102,7 @@ def turnCallback(data):
     reading = data.transforms[0].transform.rotation.w
 
     if directiontoTurn == "forward":
-        if reading >= 0.9990:
+        if reading >= 0.99999:
             moveRobot("stop")
             isTurning = False
             turnSubscription.unregister()
@@ -136,13 +153,52 @@ def moveRobot(command):
         move_cmd.angular.z = 0.0
     elif command == "right":
         move_cmd.linear.x = 0.0
-        move_cmd.angular.z = -0.10
+        move_cmd.angular.z = -0.1
     elif command == "left" or command == "backward":
         move_cmd.linear.x = 0.0
-        move_cmd.angular.z = 0.10
+        move_cmd.angular.z = 0.1
     pub.publish(move_cmd)
     time.sleep(0.01)
 
+def executeFirstPath():
+    global pub, move_cmd
+    moveRobot("stop")    
+    moveRobot("forward")
+    time.sleep(9.0909)
+    moveRobot("stop")
+    move_cmd.linear.x = 0.22
+    move_cmd.angular.z = 0.21
+    pub.publish(move_cmd)
+    time.sleep(15)
+    moveRobot("stop")
+
+def executeThirdPath():
+    global pub, move_cmd
+    moveRobot("stop")    
+    moveRobot("forward")
+    time.sleep(9.0909)
+    moveRobot("stop")
+    move_cmd.linear.x = 0.22
+    move_cmd.angular.z = -0.21
+    pub.publish(move_cmd)
+    time.sleep(15)
+    moveRobot("stop")
+
+def executeSecondPath():
+    global pub, move_cmd
+    moveRobot("stop")    
+    moveRobot("forward")
+    time.sleep(13.6363)
+    moveRobot("stop")
+    move_cmd.linear.x = 0.22
+    move_cmd.angular.z = 0.21
+    pub.publish(move_cmd)
+    time.sleep(7.5)
+    move_cmd.linear.x = 0.22
+    move_cmd.angular.z = -0.21
+    pub.publish(move_cmd)
+    time.sleep(7.5)
+    moveRobot("stop")
 
 def listener():
 
