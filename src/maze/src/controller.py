@@ -23,12 +23,12 @@ def lidarCallback(data):
     forward = data.ranges[0]
     left = data.ranges[89]
 #    leftBack = data.ranges[109]
-    leftBack = data.ranges[102]
+    leftBack = data.ranges[104]
     backward = data.ranges[179]
-    rightForward = data.ranges[279]
+    rightForward = data.ranges[299]
   #  rightForward = data.ranges[289]
  #   rightBack = data.ranges[249]
-    rightBack = data.ranges[265]
+    rightBack = data.ranges[263]
     right = data.ranges[269]
 
     rospy.loginfo('Forward: %f', forward)
@@ -57,6 +57,7 @@ def lidarCallback(data):
             if rightForward < 0.5:
                 numberOfSlits = numberOfSlits + 1
                 moveRobot("forward")
+                time.sleep(0.8)
                 subscription = rospy.Subscriber(
                     'scan', LaserScan, lidarCallback)
                 return
@@ -64,10 +65,10 @@ def lidarCallback(data):
             moveRobot("forward")
             currentDirection = "right"
 
-        elif forward > 0.2:
+        elif forward > 0.25:
             moveRobot("forward")
 
-        elif forward <= 0.2:
+        elif forward <= 0.25:
             if currentDirection == "right":
                 turn("forward")
                 currentDirection = "forward"
@@ -81,10 +82,10 @@ def lidarCallback(data):
             moveRobot("forward")
             currentDirection = "left"
 
-        elif forward > 0.2:
+        elif forward > 0.25:
             moveRobot("forward")
 
-        elif forward <= 0.2:
+        elif forward <= 0.25:
             if currentDirection == "left":
                 turn("backward")
                 currentDirection = "backward"
@@ -108,7 +109,7 @@ def turnCallback(data):
             turnSubscription.unregister()
 
     elif directiontoTurn == "right" or directiontoTurn == "left":
-        if reading >= 0.7040 and reading <= 0.7060:
+        if reading >= 0.70400 and reading <= 0.70500:
             moveRobot("stop")
             isTurning = False
             turnSubscription.unregister()
@@ -146,17 +147,17 @@ def turn(direction):
 def moveRobot(command):
     global pub, move_cmd, right, left
     if command == "forward":
-        move_cmd.linear.x = 0.22
+        move_cmd.linear.x = 0.21
         move_cmd.angular.z = 0.0
     elif command == "stop":
         move_cmd.linear.x = 0.0
         move_cmd.angular.z = 0.0
     elif command == "right":
         move_cmd.linear.x = 0.0
-        move_cmd.angular.z = -0.1
+        move_cmd.angular.z = -0.04
     elif command == "left" or command == "backward":
         move_cmd.linear.x = 0.0
-        move_cmd.angular.z = 0.1
+        move_cmd.angular.z = 0.04
     pub.publish(move_cmd)
     time.sleep(0.01)
 
