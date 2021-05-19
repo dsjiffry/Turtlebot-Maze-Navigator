@@ -8,4 +8,4 @@ The robot may find a straight wall to its right, upon exiting the maze. The wall
 could be opened or closed randomly when performing your demonstration. The robot must identify
 the number of open slits in the wall while navigating forward to reach the end of the wall.
 
-![Maze](https://raw.githubusercontent.com/dsjiffry/Turtlebot-Maze-Navigator/main/maze.jpg?token=AJIMP7WSVIULKHWOR7JVHTLAQOZ2Y)
+![Maze](/maze.jpg)
