@@ -25,7 +25,7 @@ def lidarCallback(data):
 #    leftBack = data.ranges[109]
     leftBack = data.ranges[104]
     backward = data.ranges[179]
-    rightForward = data.ranges[299]
+    rightForward = data.ranges[309]
   #  rightForward = data.ranges[289]
  #   rightBack = data.ranges[249]
     rightBack = data.ranges[263]
@@ -57,7 +57,7 @@ def lidarCallback(data):
             if rightForward < 0.5:
                 numberOfSlits = numberOfSlits + 1
                 moveRobot("forward")
-                time.sleep(0.8)
+                time.sleep(1)
                 subscription = rospy.Subscriber(
                     'scan', LaserScan, lidarCallback)
                 return
@@ -163,7 +163,6 @@ def moveRobot(command):
 
 def executeFirstPath():
     global pub, move_cmd
-    moveRobot("stop")    
     moveRobot("forward")
     time.sleep(9.0909)
     moveRobot("stop")
@@ -175,7 +174,6 @@ def executeFirstPath():
 
 def executeThirdPath():
     global pub, move_cmd
-    moveRobot("stop")    
     moveRobot("forward")
     time.sleep(9.0909)
     moveRobot("stop")
@@ -187,7 +185,6 @@ def executeThirdPath():
 
 def executeSecondPath():
     global pub, move_cmd
-    moveRobot("stop")    
     moveRobot("forward")
     time.sleep(13.6363)
     moveRobot("stop")
