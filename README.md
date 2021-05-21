@@ -15,3 +15,8 @@ three paths to follow the corresponding trajectory. Robot should be stopped with
 parking zone after completing the trajectory.
 
 ![Maze](/maze.jpg)
+
+# The Solution (at 10x speed)
+
+https://user-images.githubusercontent.com/38848510/119085799-0a561480-ba22-11eb-944c-f456e4f2752b.mp4
+
