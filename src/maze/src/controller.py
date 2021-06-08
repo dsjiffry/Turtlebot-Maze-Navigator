@@ -49,6 +49,8 @@ def lidarCallback(data):
             executeSecondPath()
         elif numberOfSlits == 3:
             executeThirdPath()
+
+        rospy.loginfo('Completed')
         sys.exit(0)
 
 
