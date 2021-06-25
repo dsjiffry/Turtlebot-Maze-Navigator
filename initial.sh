@@ -12,6 +12,9 @@ echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc
 
 echo "export TURTLEBOT3_MODEL='burger'" >> ~/.bashrc
 
+echo "export SVGA_VGPU10=0" >> ~/.bashrc
+
 source ~/.bashrc
+
 
 
