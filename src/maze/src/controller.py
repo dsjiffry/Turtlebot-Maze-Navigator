@@ -15,19 +15,15 @@ numberOfSlits = right = left = 0
 mainWall = "right"
 isTurning = False
 
-
 def lidarCallback(data):
     global currentDirection, mainWall, subscription, numberOfSlits, right, left
     subscription.unregister()
 
     forward = data.ranges[0]
     left = data.ranges[89]
-#    leftBack = data.ranges[109]
     leftBack = data.ranges[104]
     backward = data.ranges[179]
     rightForward = data.ranges[309]
-  #  rightForward = data.ranges[289]
- #   rightBack = data.ranges[249]
     rightBack = data.ranges[263]
     right = data.ranges[269]
 
@@ -99,7 +95,6 @@ def lidarCallback(data):
 
     subscription = rospy.Subscriber('scan', LaserScan, lidarCallback)
 
-
 def turnCallback(data):
     global isTurning, directiontoTurn, turnSubscription
     reading = data.transforms[0].transform.rotation.w
@@ -122,7 +117,6 @@ def turnCallback(data):
             isTurning = False
             turnSubscription.unregister()
 
-
 def turn(direction):
     global isTurning, directiontoTurn, turnSubscription, currentDirection
     isTurning = True
@@ -144,7 +138,6 @@ def turn(direction):
 
     while isTurning:
         time.sleep(0.1)
-
 
 def moveRobot(command):
     global pub, move_cmd, right, left
